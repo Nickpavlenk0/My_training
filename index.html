@@ -3,13 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Дневник тренировок Коли — MVP</title>
-  <link rel="stylesheet" href="styles/style.css">
+  <title>Дневник тренировок Коли — v5 (картинки из /assets/pack)</title>
+  <style>
+    :root{--bg:#0f1115;--panel:#161a22;--panel2:#1c2230;--text:#e6e8ee;--muted:#9aa3b2;--accent:#6ea8fe;--good:#2dd4bf;--warn:#f59e0b;--bad:#f87171}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif}
+    header{position:sticky;top:0;background:linear-gradient(180deg,var(--bg),rgba(15,17,21,.8));backdrop-filter:blur(6px);z-index:5;border-bottom:1px solid #202534}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    h1{font-size:20px;margin:4px 0}
+    nav{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+    nav button{background:var(--panel);border:1px solid #273043;color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+    nav button.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(110,168,254,.25) inset}
+    section.panel{background:var(--panel);border:1px solid #273043;border-radius:14px;padding:16px;margin:12px 0}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row > *{flex:1 1 220px}
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+    input,select,textarea{width:100%;background:var(--panel2);border:1px solid #2b3548;color:var(--text);padding:10px;border-radius:10px}
+    textarea{min-height:80px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid #273043;padding:10px;vertical-align:top}
+    th{color:#b9c1d0;text-align:left}
+    .btn{background:#23314a;border:1px solid #2f3f5e;color:#e6e8ee;padding:10px 12px;border-radius:10px;cursor:pointer}
+    .btn:hover{filter:brightness(1.1)}
+    .btn.ghost{background:transparent;border-color:#2f3f5e}
+    .btn.good{background:#123c36;border-color:#1f8a78}
+    .btn.bad{background:#3c1212;border-color:#8a1f1f}
+    .pill{display:inline-block;padding:.25em .6em;border:1px solid #334155;border-radius:999px;color:#cbd5e1;background:#111827}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    .hidden{display:none}
+    .help{font-size:12px;color:#9aa3b2}
+    .col-eye{width:70px;text-align:center}
+    dialog{border:1px solid #273043;background:#111827;color:#e6e8ee;border-radius:12px;padding:16px;max-width:900px}
+    dialog::backdrop{background:rgba(0,0,0,.6)}
+    .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .legend .tag{border:1px solid #334155;background:#0b1220;border-radius:999px;padding:.2em .6em;font-size:12px}
+    .atlas{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .panelAtlas{position:relative;background:#0b1220;border:1px solid #22314a;border-radius:12px;overflow:hidden}
+    .panelAtlas .title{position:absolute;left:8px;bottom:6px;color:#9aa3b2;font-size:12px;background:rgba(0,0,0,.35);padding:2px 6px;border-radius:6px}
+    .panelAtlas .layer{position:absolute;inset:0;object-fit:contain;opacity:.92;pointer-events:none}
+    .panelAtlas .base{position:relative;display:block;width:100%}
+  </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <h1>Дневник тренировок Коли — MVP</h1>
+      <h1>Дневник тренировок Коли — v5</h1>
       <nav>
         <button data-tab="today" class="active">Сегодня</button>
         <button data-tab="history">История</button>
@@ -20,7 +60,6 @@
   </header>
 
   <main class="wrap">
-    <!-- СЕГОДНЯ -->
     <section id="tab-today" class="panel">
       <div class="row">
         <div>
@@ -37,36 +76,106 @@
           </select>
         </div>
         <div>
-          <label>Общая заметка (самочувствие/цели)</label>
-          <input id="sessionNote" placeholder="Сон, самочувствие, пульс, задачи…"/>
+          <label>Описание тренировки (как выполнять, приоритеты)</label>
+          <input id="descInput" placeholder="Напр.: темп 3‑1‑1, паузы 60‑90с; порядок: сначала многосуставные, затем добивка; держать нейтраль в пояснице…"/>
         </div>
       </div>
 
-      <h3>Упражнения</h3>
-      <table id="exTable">
+      <div class="help" style="margin:6px 0 10px 0">RPE = субъективная интенсивность 1–10 (10 = отказ; 8 ≈ 2 повтора в запасе). <button id="rpeHelp" class="btn ghost" style="padding:6px 8px">Справка по RPE</button></div>
+
+      <h3>Разминка</h3>
+      <table id="warmTable">
         <thead>
           <tr>
-            <th style="width:20%">Название</th>
-            <th style="width:12%">Мышцы</th>
-            <th style="width:13%">Схема (план)</th>
-            <th style="width:13%">Факт</th>
-            <th style="width:10%">RPE</th>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
             <th>Заметка</th>
-            <th style="width:10%"></th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
-      <div class="right" style="margin-top:10px">
-        <button class="btn" id="addRowBtn">+ Добавить упражнение</button>
+      <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="warm">+ Добавить (разминка)</button></div>
+
+      <h3>Силовая часть</h3>
+      <table id="strengthTable">
+        <thead>
+          <tr>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
+            <th>Заметка</th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="justify-content:space-between;margin:6px 0 18px 0">
+        <button class="btn" data-add="strength">+ Добавить (силовая)</button>
         <button class="btn ghost" id="loadTemplateBtn">Загрузить шаблон дня</button>
       </div>
 
-      <details style="margin-top:12px">
-        <summary>Быстрый ввод одним текстом</summary>
-        <p class="small muted">Формат строк: <code>Название — мышцы — план</code>. Пример: <em>Гоблет-присед — квадрицепсы/ягодицы — 3×10</em>. Одна строка = одно упражнение.</p>
-        <textarea id="bulkText" placeholder="Вставь сюда строки упражнений…"></textarea>
-        <div class="right" style="margin-top:8px"><button class="btn" id="bulkAddBtn">Добавить из текста</button></div>
+      <h3>Высокоинтенсив</h3>
+      <table id="hiitTable">
+        <thead>
+          <tr>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
+            <th>Заметка</th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="hiit">+ Добавить (ВИИТ)</button></div>
+
+      <h3>Заминка</h3>
+      <table id="coolTable">
+        <thead>
+          <tr>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
+            <th>Заметка</th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="cool">+ Добавить (заминка)</button></div>
+
+      <details>
+        <summary>Быстрый ввод / вставка плана из чата</summary>
+        <p class="small muted">Секции: <code>Разминка:</code>, <code>Силовая:</code>, <code>Высокоинтенсив:</code>, <code>Заминка:</code>. Строки: <code>Название — мышцы — план — tip:техника — note:заметка</code>. <i>«tip» и «note» необязательны.</i></p>
+<textarea id="bulkText" placeholder="Например:
+Разминка:
+Стойка у стены — плечи/кор — 2×30с — tip:нейтраль поясницы
+Силовая:
+Жим гири стоя — дельты/трицепс — 3×8/рука — tip:локоть под гирей
+Отжимания в треугольнике — трицепс/грудь — 3×6–10 — note:последний тяжело
+Высокоинтенсив:
+Качели с гирей — ягодицы/бицепс бедра/кор — 30с × 3 (30с отдых)
+Заминка:
+Плечевой замок — дельты/грудь — 2×30с"></textarea>
+        <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" id="bulkAddBtn">Разобрать и заполнить</button></div>
       </details>
 
       <div class="row" style="margin-top:14px">
@@ -76,14 +185,14 @@
         </div>
       </div>
 
-      <div class="right" style="margin-top:10px">
+      <div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px">
         <button class="btn" id="saveBtn">💾 Сохранить тренировку</button>
         <button class="btn good" id="exportTodayBtn">⬇︎ Экспорт (JSON)</button>
         <button class="btn ghost" id="copySummaryBtn">📋 Скопировать отчёт для тренера</button>
+        <button class="btn bad" id="deleteTodayBtn">🗑 Удалить эту тренировку</button>
       </div>
     </section>
 
-    <!-- ИСТОРИЯ -->
     <section id="tab-history" class="panel hidden">
       <div class="grid">
         <div class="kpi"><h3>Тренировок за период</h3><div class="num" id="kpiSessions">0</div></div>
@@ -109,7 +218,7 @@
             <option value="День 3">День 3</option>
           </select>
         </div>
-        <div class="right" style="align-items:flex-end">
+        <div class="row" style="justify-content:flex-end;align-items:flex-end">
           <button class="btn" id="refreshHistory">Обновить</button>
           <button class="btn good" id="exportRangeJson">Экспорт JSON</button>
           <button class="btn" id="exportRangeCsv">Экспорт CSV</button>
@@ -125,7 +234,7 @@
           <tr>
             <th style="width:110px">Дата</th>
             <th style="width:90px">День</th>
-            <th>Упражнения (факт)</th>
+            <th>Строк (все секции)</th>
             <th style="width:80px">Подходы</th>
             <th style="width:80px">Средн. RPE</th>
             <th style="width:110px"></th>
@@ -135,13 +244,11 @@
       </table>
     </section>
 
-    <!-- ШАБЛОНЫ -->
     <section id="tab-templates" class="panel hidden">
-      <p class="muted small">Шаблоны можно редактировать. При нажатии «Загрузить в Сегодня» — текущие упражнения заменятся списком из шаблона.</p>
+      <p class="small muted">Шаблоны можно редактировать и загружать целиком в «Сегодня».</p>
       <div class="grid" id="templatesGrid"></div>
     </section>
 
-    <!-- НАСТРОЙКИ -->
     <section id="tab-settings" class="panel hidden">
       <div class="grid">
         <div>
@@ -157,15 +264,247 @@
           <input id="gearInput" placeholder="Гиря 16 кг, гантель 10 кг, резинки, ролик, диван/стул" />
         </div>
       </div>
-      <div class="right" style="margin-top:10px">
+      <div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px">
         <button class="btn" id="saveProfile">Сохранить профиль</button>
         <button class="btn bad" id="wipeAll">Стереть все данные (локально)</button>
       </div>
-      <p class="muted small">Данные хранятся в браузере (localStorage). Используй экспорт/импорт для резервных копий и переноса.
-      В следующий шаг можно подключить Google Sheets или GitHub Issues для синхронизации — код легко расширить.</p>
+      <p class="muted small">Данные хранятся в браузере (localStorage). Используй экспорт/импорт для резервных копий и переноса.</p>
     </section>
   </main>
 
-  <script defer src="scripts/app.js"></script>
+  <dialog id="rpeModal">
+    <h3>RPE — субъективная тяжесть подхода (1–10)</h3>
+    <ul class="small">
+      <li><b>6–7</b> — легко, осталось 3–4 повтора в запасе</li>
+      <li><b>8</b> — рабочая тяжесть, ~2 повтора в запасе</li>
+      <li><b>9</b> — тяжело, ~1 повтор в запасе</li>
+      <li><b>10</b> — отказ, запас = 0</li>
+    </ul>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="closeRpe">Закрыть</button></div>
+  </dialog>
+
+  <dialog id="muscleModal">
+    <h3>Задействованные мышцы</h3>
+    <div id="muscleFigure" class="atlas"></div>
+    <div id="muscleLegend" class="legend"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="closeMuscle">Закрыть</button></div>
+  </dialog>
+
+  <script>
+  (()=>{
+    const KEY='kolyaTrainingV1';
+    const $=(s)=>document.querySelector(s); const $$=(s)=>Array.from(document.querySelectorAll(s));
+
+    // ==== Навигация
+    const panels={today:'#tab-today',history:'#tab-history',templates:'#tab-templates',settings:'#tab-settings'};
+    $$('.wrap nav button').forEach(btn=>{ btn.addEventListener('click',()=>{ $$('.wrap nav button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); Object.values(panels).forEach(sel=>$(sel).classList.add('hidden')); $(panels[btn.dataset.tab]).classList.remove('hidden'); if(btn.dataset.tab==='history') renderHistory(); if(btn.dataset.tab==='templates') renderTemplates(); if(btn.dataset.tab==='settings') renderSettings(); }); });
+
+    // ==== Состояние
+    const state=loadState();
+    function loadState(){ try{ const raw=localStorage.getItem(KEY); const base= raw? JSON.parse(raw): {profile:defProfile(),sessions:[],templates:defTemplates()}; base.sessions=(base.sessions||[]).map(s=>({...s, strength:s.strength||s.exercises||[], warm:s.warm||s.warmup?.map(n=>({name:n}))||[], cool:s.cool||s.cooldown?.map(n=>({name:n}))||[], hiit:s.hiit||[]})); return base; }catch(e){ return {profile:defProfile(),sessions:[],templates:defTemplates()}; } }
+    function saveState(){ localStorage.setItem(KEY,JSON.stringify(state)); }
+    function defProfile(){ return {name:'Коля',goal:'Сила + выносливость + Антибока',gear:'Гиря 16 кг; гантель 10 кг; резинки; ролик; стул/диван'}; }
+
+    // ==== Шаблоны
+    function defTemplates(){ return [
+      {id:'d1',title:'День 1 — Плечи/Руки/Пресс',desc:'Силовая по подходам, отдых 60–90с.',
+       warm:[{name:'Стойка у стены',muscles:'плечи/кор',plan:'2×30с',tip:'лицом/спиной, нейтраль поясницы'}],
+       strength:[{name:'Жим гири стоя',muscles:'дельты/трицепс',plan:'3×8/рука',tip:'локоть под гирей'},{name:'Отжимания в треугольнике',muscles:'трицепс/грудь',plan:'3×6–10',tip:'локти вдоль корпуса'},{name:'Сгибания с резинкой (21 метод)',muscles:'бицепс',plan:'3×21'},{name:'Французский жим с гирей',muscles:'трицепс',plan:'3×10–12'}],
+       hiit:[{name:'Качели с гирей',muscles:'ягодицы/бицепс бедра/кор',plan:'30с × 3 (30с отдых)'}],
+       cool:[{name:'Плечевой замок',muscles:'дельты/грудь',plan:'2×30с'},{name:'Панкейк',muscles:'приводящие/бицепс бедра',plan:'60с'}]},
+      {id:'d2',title:'День 2 — Ноги/Ягодицы/Кор',desc:'Темп контролируемый; пауза 1с внизу в первом упражнении.',
+       warm:[{name:'Казачьи приседания',muscles:'приводящие/квадрицепсы',plan:'2×6/нога'}],
+       strength:[{name:'Гоблет-присед (3-1-1)',muscles:'квадрицепсы/ягодицы',plan:'3×10–12'},{name:'Выпад назад с гантелью',muscles:'квадрицепсы/ягодицы',plan:'3×10/нога'},{name:'Румынская тяга с гирей',muscles:'бицепс бедра/ягодицы',plan:'3×10'},{name:'Краб с резинкой',muscles:'средняя ягодичная',plan:'3×12+12 шагов'}],
+       hiit:[{name:'Скейт‑прыжки',muscles:'ягодицы/бицепс бедра/икры',plan:'3×30с/30с'}],
+       cool:[{name:'Растяжка бицепса бедра',muscles:'бицепс бедра',plan:'2×30с/нога'}]},
+      {id:'d3',title:'День 3 — Грудь/Спина/Пресс',desc:'Фокус на работе лопаток и нейтрали в пояснице.',
+       warm:[{name:'Разведения с резинкой',muscles:'задняя дельта/ромбовидные',plan:'2×15'}],
+       strength:[{name:'Отжимания на диване (пауза)',muscles:'грудь/трицепс',plan:'3×8–10'},{name:'Тяга гири в наклоне',muscles:'широчайшие/ромбовидные',plan:'3×10/рука'},{name:'Пуловер с гантелью',muscles:'верх груди/широчайшие',plan:'3×12'},{name:'Разведения с резинкой в наклоне',muscles:'задняя дельта',plan:'3×12–15'}],
+       hiit:[{name:'Берпи',muscles:'кор/ноги/плечи',plan:'3×20с/40с'}],
+       cool:[{name:'Растяжка груди у двери',muscles:'грудь/дельты',plan:'2×30с'}]}
+    ]; }
+
+    // ==== Элементы
+    const dateInput=$('#dateInput'); const dayType=$('#dayType'); const descInput=$('#descInput'); const reportText=$('#reportText');
+    try{dateInput.valueAsDate=new Date();}catch(_){ }
+
+    const tables={warm:$('#warmTable tbody'),strength:$('#strengthTable tbody'),hiit:$('#hiitTable tbody'),cool:$('#coolTable tbody')};
+    $$('[data-add]').forEach(btn=> btn.addEventListener('click',()=> addRow(btn.dataset.add)));
+
+    function addRow(section,item={}){
+      const tb=tables[section]; const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input value="${esc(item.name||'')}" placeholder="Название"></td>
+        <td><input value="${esc(item.muscles||'')}" placeholder="Мышцы (напр. грудь/трицепс)"></td>
+        <td><input value="${esc(item.plan||'')}" placeholder="План (напр. 3×10 / 30с)"></td>
+        <td><input value="${esc(item.fact||'')}" placeholder="Факт (напр. 3×8)"></td>
+        <td><input value="${esc(item.rpe||'')}" placeholder="RPE"></td>
+        <td><input value="${esc(item.tip||'')}" placeholder="Техника (мои подсказки)"></td>
+        <td><input value="${esc(item.note||'')}" placeholder="Заметка (твоё исполнение)"></td>
+        <td class="col-eye"><button class="btn ghost eye" title="Показать мышцы">👁</button></td>
+        <td><button class="btn ghost del" title="Удалить">×</button></td>`;
+      tr.querySelector('.del').addEventListener('click',()=> tr.remove());
+      tr.querySelector('.eye').addEventListener('click',()=>{ const mus=tr.querySelectorAll('input')[1].value; showMuscles(mus); });
+      tb.appendChild(tr);
+    }
+
+    // Загрузка шаблона дня
+    $('#loadTemplateBtn').addEventListener('click',()=>{ const t=state.templates.find(t=>t.title.startsWith(dayType.value)); if(!t) return alert('Нет шаблона для выбранного дня'); Object.values(tables).forEach(tb=> tb.innerHTML=''); (t.warm||[]).forEach(i=> addRow('warm',i)); (t.strength||[]).forEach(i=> addRow('strength',i)); (t.hiit||[]).forEach(i=> addRow('hiit',i)); (t.cool||[]).forEach(i=> addRow('cool',i)); descInput.value=t.desc||''; window.scrollTo({top:0,behavior:'smooth'}); });
+
+    // Быстрый ввод (tip:/note:)
+    $('#bulkAddBtn').addEventListener('click',()=>{ const txt=($('#bulkText').value||'').trim(); if(!txt) return; parseBulk(txt); $('#bulkText').value=''; });
+    function parseBulk(text){ Object.values(tables).forEach(tb=> tb.innerHTML=''); let sec='strength'; text.split(/\n+/).forEach(raw=>{ const line=raw.trim(); if(!line) return; const l=line.toLowerCase(); if(/^разминка/.test(l)){sec='warm';return} if(/^(высокоинтенсив|виит|fin|hiit)/.test(l)){sec='hiit';return} if(/^(заминка|растяж)/.test(l)){sec='cool';return} if(/^(силова|упражнен)/.test(l)){sec='strength';return} const parts=line.split('—').map(s=> s.trim()); const obj={}; obj.name=parts[0]||''; if(parts[1]&&!/^tip:|^note:/.test(parts[1])) obj.muscles=parts[1]; const rest=parts.slice( obj.muscles?2:1).join(' — '); const tokens=rest.split(/\s—\s|\s;\s/); tokens.forEach(t=>{ const m=t.match(/^tip:(.*)/i); const n=t.match(/^note:(.*)/i); if(m) obj.tip=m[1].trim(); else if(n) obj.note=n[1].trim(); else if(!obj.plan) obj.plan=t.trim(); }); addRow(sec,obj); }); }
+
+    // Сохранение / экспорт / отчёт / удаление
+    $('#saveBtn').addEventListener('click',()=>{ saveSession(); alert('Сохранено ✅'); });
+    $('#deleteTodayBtn').addEventListener('click',()=>{ const id=currentId(); const before=state.sessions.length; state.sessions=state.sessions.filter(s=> s.id!==id); saveState(); alert(before===state.sessions.length?'Не найдено тренировки на эту дату/день':'Удалено ✅'); });
+    $('#exportTodayBtn').addEventListener('click',()=>{ const s=collectSession(); download(`session_${s.date}.json`, JSON.stringify(s,null,2)); });
+    $('#copySummaryBtn').addEventListener('click',()=>{ const s=collectSession(); const lines=[]; lines.push(`Дата: ${s.date} — ${s.dayType}`); if(s.desc) lines.push(`Описание: ${s.desc}`); function dump(title,arr){ if(!arr||!arr.length) return; lines.push(`${title}:`); arr.forEach(i=> lines.push(`• ${i.name}${i.muscles?` (${i.muscles})`:''} — план: ${i.plan||'—'}; факт: ${i.fact||'—'}${i.rpe?`; RPE: ${i.rpe}`:''}${i.tip?`; техника: ${i.tip}`:''}${i.note?`; заметка: ${i.note}`:''}`)); } dump('Разминка',s.warm); dump('Силовая',s.strength); dump('Высокоинтенсив',s.hiit); dump('Заминка',s.cool); if(s.report) lines.push(`Отчёт: ${s.report}`); navigator.clipboard.writeText(lines.join('\n')).then(()=> alert('Отчёт скопирован ✅')).catch(()=> alert('Не удалось скопировать')); });
+
+    function currentId(){ const d=dateInput.value || new Date().toISOString().slice(0,10); return `${d}_${dayType.value}`.replace(/\s+/g,'_'); }
+    function collectSection(tb){ return Array.from(tb.querySelectorAll('tr')).map(tr=>{ const [n,m,p,f,rpe,tip,note]=Array.from(tr.querySelectorAll('input')); return {name:n.value.trim(),muscles:(m.value||'').trim(),plan:(p.value||'').trim(),fact:(f.value||'').trim(),rpe:(rpe.value||'').trim(),tip:(tip.value||'').trim(),note:(note.value||'').trim()}; }).filter(i=> i.name || i.plan || i.fact); }
+    function collectSession(){ const date=dateInput.value || new Date().toISOString().slice(0,10); return {id:currentId(),date,dayType:dayType.value,desc:(descInput.value||'').trim(),report:(reportText.value||'').trim(),warm:collectSection(tables.warm),strength:collectSection(tables.strength),hiit:collectSection(tables.hiit),cool:collectSection(tables.cool)}; }
+    function saveSession(){ const s=collectSession(); state.sessions=state.sessions.filter(x=> x.id!==s.id); state.sessions.push(s); state.sessions.sort((a,b)=> a.date.localeCompare(b.date)); saveState(); }
+
+    // ==== История
+    const historyTbody=$('#historyTable tbody'); const fromDate=$('#fromDate'); const toDate=$('#toDate'); const filterDay=$('#filterDay');
+    $('#refreshHistory').addEventListener('click',renderHistory);
+    $('#exportRangeJson').addEventListener('click',()=>{ const arr=filteredSessions(); download(`sessions_${fromDate.value||'all'}_${toDate.value||'all'}.json`, JSON.stringify(arr,null,2)); });
+    $('#exportRangeCsv').addEventListener('click',()=>{ const arr=filteredSessions(); const rows=[["date","day","section","exercise","plan","fact","rpe","tip","note"]]; arr.forEach(s=>{ [['warm','Разминка'],['strength','Силовая'],['hiit','Высокоинтенсив'],['cool','Заминка']].forEach(([key,secName])=> (s[key]||[]).forEach(e=> rows.push([s.date,s.dayType,secName,e.name,e.plan||'',e.fact||'',e.rpe||'',e.tip||'',e.note||''])) ); }); const csv=rows.map(r=> r.map(x=>`"${(x||'').replace(/"/g,'""')}` ).join(',')).join('\n'); download(`sessions_${fromDate.value||'all'}_${toDate.value||'all'}.csv`, csv); });
+    $('#importFile').addEventListener('change',(e)=>{ const file=e.target.files?.[0]; if(!file) return; const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(!Array.isArray(arr)) return alert('Ожидался массив сессий'); const map=new Map(state.sessions.map(s=>[s.id,s])); arr.forEach(s=> map.set(s.id,s)); state.sessions=[...map.values()].sort((a,b)=> a.date.localeCompare(b.date)); saveState(); renderHistory(); alert('Импортировано ✅'); }catch(_){ alert('Ошибка чтения файла'); } }; r.readAsText(file); e.target.value=''; });
+    function filteredSessions(){ const fd=fromDate.value? new Date(fromDate.value):null; const td=toDate.value? new Date(toDate.value):null; return state.sessions.filter(s=>{ const d=new Date(s.date); if(fd && d<fd) return false; if(td && d>td) return false; if(filterDay.value && s.dayType!==filterDay.value) return false; return true; }); }
+    function renderHistory(){ if(!fromDate.value && !toDate.value){ const d=new Date(); const start=new Date(d.getFullYear(),d.getMonth(),d.getDate()-30); try{fromDate.valueAsDate=start; toDate.valueAsDate=d;}catch(_){}} const arr=filteredSessions(); historyTbody.innerHTML=''; let totalSets=0,rpeSum=0,rpeCnt=0; arr.forEach(s=>{ const all=[...(s.warm||[]),...(s.strength||[]),...(s.hiit||[]),...(s.cool||[])]; const sets=all.reduce((acc,e)=>{ const m=/([0-9]+)\s*×\s*([0-9]+)/i.exec(e.fact||e.plan||''); return acc+(m?parseInt(m[1],10):0); },0); totalSets+=sets; all.forEach(e=>{ const r=parseFloat(e.rpe); if(!isNaN(r)){rpeSum+=r;rpeCnt++;}}); const tr=document.createElement('tr'); const first=all.slice(0,4).map(e=> `${e.name}${e.fact?` <span class='pill'>${e.fact}</span>`:''}`).join('<br>'); tr.innerHTML=`<td>${s.date}</td><td>${s.dayType}</td><td>${first}${all.length>4?`<div class='muted small'>…и ещё ${all.length-4}</div>`:''}</td><td>${sets}</td><td>${rpeCnt?(rpeSum/rpeCnt).toFixed(1):'—'}</td><td class='row' style='justify-content:flex-end;gap:8px'><button class='btn ghost' data-view='${s.id}'>Открыть</button><button class='btn bad' data-del='${s.id}'>Удалить</button></td>`; historyTbody.appendChild(tr); }); $('#kpiSessions').textContent=arr.length; $('#kpiSets').textContent=totalSets; $('#kpiRpe').textContent=rpeCnt?(rpeSum/rpeCnt).toFixed(1):'—'; $$('#historyTable [data-view]').forEach(b=> b.addEventListener('click',()=>{ const s=state.sessions.find(x=> x.id===b.dataset.view); if(!s) return; $$('.wrap nav button').find(x=> x.dataset.tab==='today')?.click(); dateInput.value=s.date; dayType.value=s.dayType; descInput.value=s.desc||''; reportText.value=s.report||''; Object.values(tables).forEach(tb=> tb.innerHTML=''); (s.warm||[]).forEach(i=> addRow('warm',i)); (s.strength||s.exercises||[]).forEach(i=> addRow('strength',i)); (s.hiit||[]).forEach(i=> addRow('hiit',i)); (s.cool||s.cooldown||[]).forEach(i=> addRow('cool',i.name?i:{name:i})); window.scrollTo({top:0,behavior:'smooth'}); })); $$('#historyTable [data-del]').forEach(b=> b.addEventListener('click',()=>{ if(!confirm('Удалить эту сессию?')) return; state.sessions=state.sessions.filter(s=> s.id!==b.dataset.del); saveState(); renderHistory(); })); }
+
+    // ==== RPE modal
+    $('#rpeHelp').addEventListener('click',()=> $('#rpeModal').showModal());
+    $('#closeRpe').addEventListener('click',()=> $('#rpeModal').close());
+
+    // ==== Мускульная карта на базе КАРТИНОК из /assets/pack/
+    const IMG_BASES = ['/assets/pack/','./assets/pack/','assets/pack/'];
+    const BASE_IMG = {front:'pered.gif', back:'zad.gif'}; // как в архиве
+
+    // Соответствие «каноническая группа → файлы-слои (по сторонам)»
+    const FILES = {
+      'грудь': {front:['gryd_4.gif']},
+      'дельты': {front:['sred_4.gif']},
+      'бицепс': {front:['biceps_4.gif']},
+      'трицепс': {back:['tric_z_4.gif']},
+      'предплечья': {front:['predp_4.gif'], back:['predp_z_4.gif']},
+      'пресс': {front:['presss_4.gif']},
+      'низ пресса': {front:['podpoi_4.gif']},
+      'косые': {front:['kosie_4.gif']},
+      'трапеция': {front:['trap_4.gif'], back:['trap_z_4.gif']},
+      'широчайшие': {back:['verh_z_4.gif']},
+      'разгибатели спины': {back:['poias_z_4.gif']},
+      'ягодицы': {back:['iagod_z_4.gif']},
+      'средняя ягодичная': {back:['iagod_z_4.gif']},
+      'квадрицепсы': {front:['ppb_4.gif']},
+      'приводящие': {front:['vpb_4.gif'], back:['vpb_z_4.gif']},
+      'наружная поверхность бедра': {back:['npb_z_4.gif']},
+      'бицепс бедра': {back:['zpb_z_4.gif']},
+      'икры': {front:['golen_4.gif'], back:['golen_z_4.gif']},
+      'шея': {front:['sheia_4.gif']}
+    };
+
+    // Синонимы → канонический ключ
+    const SYN = [
+      ['грудь',['груд','chest','pector']],
+      ['дельты',['плечи','дельт','deltoid']],
+      ['бицепс',['биц','biceps']],
+      ['трицепс',['триц','triceps']],
+      ['предплечья',['предплеч','forearm']],
+      ['пресс',['кор','abs','пресс','прямая мышца живота']],
+      ['низ пресса',['нижний пресс','нижн пресс','подпояс']],
+      ['косые',['кос','oblique']],
+      ['трапеция',['трап','traps','верх трапеции','сред трапеции','ниж трапеции']],
+      ['широчайшие',['широч','lat','lats','верх спины']],
+      ['разгибатели спины',['эректор','erector','поясница']],
+      ['ягодицы',['ягод','glute','glutes']],
+      ['средняя ягодичная',['средняя ягод','glute medius']],
+      ['квадрицепсы',['квадр','quads']],
+      ['приводящие',['аддукт','adductor']],
+      ['наружная поверхность бедра',['абдукт','наруж бедра',' abductors']],
+      ['бицепс бедра',['хамстр','hamstring','задняя поверхность бедра','зад бедра']],
+      ['икры',['голени','икр','calf','calves']],
+      ['шея',['neck','шей']]
+    ];
+
+    function canonicalGroups(text){
+      const t=(text||'').toLowerCase(); const res=new Set();
+      SYN.forEach(([canon,arr])=>{ if(t.includes(canon)) res.add(canon); else if(arr.some(a=> t.includes(a))) res.add(canon); });
+      return Array.from(res);
+    }
+
+    function showMuscles(musclesText){
+      const groups = canonicalGroups(musclesText);
+      buildAtlas(groups).then(ok=>{
+        if(!ok){ // если не нашли ни одного изображения — покажем fallback SVG из прошлой версии
+          showFallbackSVG(groups);
+        }
+      });
+    }
+
+    function pickUrl(filename){
+      return new Promise(resolve=>{
+        let i=0; const tryNext=()=>{
+          if(i>=IMG_BASES.length) return resolve(null);
+          const url = IMG_BASES[i++] + filename;
+          const img = new Image(); img.onload=()=> resolve(url); img.onerror=tryNext; img.src=url+`?v=${Date.now()}`; // bust cache
+        }; tryNext();
+      });
+    }
+
+    async function buildAtlas(groups){
+      const fig = $('#muscleFigure'); fig.innerHTML='';
+      const frontWrap = document.createElement('div'); frontWrap.className='panelAtlas';
+      const backWrap = document.createElement('div'); backWrap.className='panelAtlas';
+      fig.appendChild(frontWrap); fig.appendChild(backWrap);
+
+      // Подложки
+      const frontBaseUrl = await pickUrl(BASE_IMG.front);
+      const backBaseUrl  = await pickUrl(BASE_IMG.back);
+      if(frontBaseUrl){ const img=document.createElement('img'); img.className='base'; img.src=frontBaseUrl; frontWrap.appendChild(img);} else {frontWrap.innerHTML='<div class="muted small" style="padding:12px">Нет подложки (pered.gif)</div>'}
+      if(backBaseUrl){ const img=document.createElement('img'); img.className='base'; img.src=backBaseUrl; backWrap.appendChild(img);} else {backWrap.innerHTML='<div class="muted small" style="padding:12px">Нет подложки (zad.gif)</div>'}
+      const ft=document.createElement('div'); ft.className='title'; ft.textContent='СПЕРЕДИ'; frontWrap.appendChild(ft);
+      const bt=document.createElement('div'); bt.className='title'; bt.textContent='СЗАДИ'; backWrap.appendChild(bt);
+
+      // Слои для выбранных групп
+      let anyLayer=false;
+      for(const g of groups){
+        const files = FILES[g]; if(!files) continue;
+        if(files.front){ for(const f of files.front){ const url=await pickUrl(f); if(url){ const img=document.createElement('img'); img.className='layer'; img.src=url; frontWrap.appendChild(img); anyLayer=true; }} }
+        if(files.back){ for(const f of files.back){ const url=await pickUrl(f); if(url){ const img=document.createElement('img'); img.className='layer'; img.src=url; backWrap.appendChild(img); anyLayer=true; }} }
+      }
+
+      // Легенда
+      $('#muscleLegend').innerHTML = groups.map(g=>`<span class='tag'>${g}</span>`).join('') || '<span class="muted small">Укажи группы в колонке «Мышцы» (напр.: грудь/трицепс; широчайшие/ромбовидные).</span>';
+      $('#muscleModal').showModal();
+      return anyLayer || (frontBaseUrl||backBaseUrl);
+    }
+
+    // Простейший SVG-фоллбек (если картинок нет)
+    function showFallbackSVG(groups){
+      const fig=$('#muscleFigure');
+      fig.innerHTML = `<svg viewBox='0 0 740 320' width='100%' style='background:#0b1220;border:1px solid #22314a;border-radius:10px'>
+        <text x='370' y='160' text-anchor='middle' fill='#9aa3b2'>Нет картинок в /assets/pack — используется упрощённая схема</text>
+      </svg>`;
+      $('#muscleLegend').innerHTML = groups.map(g=>`<span class='tag'>${g}</span>`).join('');
+      $('#muscleModal').showModal();
+    }
+
+    $('#closeRpe').addEventListener('click',()=> $('#rpeModal').close());
+    $('#closeMuscle').addEventListener('click',()=> $('#muscleModal').close());
+
+    // ==== Настройки/Шаблоны
+    const templatesGrid=$('#templatesGrid'); const nameInput=$('#nameInput'); const goalInput=$('#goalInput'); const gearInput=$('#gearInput');
+    function renderTemplates(){ templatesGrid.innerHTML=''; state.templates.forEach(t=>{ const card=document.createElement('div'); card.className='kpi'; card.innerHTML=`<div class='tag'>Шаблон</div><h3 style='font-size:16px;margin:4px 0 8px 0'>${t.title}</h3><div class='small muted'>${[...t.warm||[],...t.strength||[],...t.hiit||[],...t.cool||[]].slice(0,5).map(i=> `${i.name} <span class='pill'>${i.plan||''}</span>`).join('<br>')}</div><div class='row' style='justify-content:flex-end;margin-top:10px;gap:8px'><button class='btn' data-load='${t.id}'>Загрузить в Сегодня</button><button class='btn ghost' data-edit='${t.id}'>Редактировать</button></div>`; templatesGrid.appendChild(card); }); $$('#templatesGrid [data-load]').forEach(btn=> btn.addEventListener('click',()=>{ const t=state.templates.find(x=> x.id===btn.dataset.load); if(!t) return; $$('.wrap nav button').find(b=> b.dataset.tab==='today')?.click(); Object.values(tables).forEach(tb=> tb.innerHTML=''); (t.warm||[]).forEach(i=> addRow('warm',i)); (t.strength||[]).forEach(i=> addRow('strength',i)); (t.hiit||[]).forEach(i=> addRow('hiit',i)); (t.cool||[]).forEach(i=> addRow('cool',i)); dayType.value=t.title.split(' — ')[0]; descInput.value=t.desc||''; window.scrollTo({top:0,behavior:'smooth'}); })); $$('#templatesGrid [data-edit]').forEach(btn=> btn.addEventListener('click',()=>{ const t=state.templates.find(x=> x.id===btn.dataset.edit); if(!t) return; const txt=prompt('Одна строка = «Название — мышцы — план — tip:техника — note:заметка»', (t.strength||[]).map(i=> `${i.name} — ${i.muscles||''} — ${i.plan||''}${i.tip?` — tip:${i.tip}`:''}`).join('\n')); if(txt===null) return; const items=[]; txt.split(/\n+/).forEach(line=>{ const parts=line.split('—').map(s=> s&&s.trim()); if(!parts[0]) return; const obj={name:parts[0]}; if(parts[1] && !/^tip:|^note:/.test(parts[1])) obj.muscles=parts[1]; const rest=parts.slice(obj.muscles?2:1).join(' — '); rest.split(/\s—\s|\s;\s/).forEach(tk=>{ const m=tk.match(/^tip:(.*)/i); const n=tk.match(/^note:(.*)/i); if(m) obj.tip=m[1].trim(); else if(n) obj.note=n[1].trim(); else if(!obj.plan) obj.plan=tk.trim(); }); items.push(obj); }); t.strength=items; saveState(); renderTemplates(); })); }
+    function renderSettings(){ nameInput.value=state.profile.name||''; goalInput.value=state.profile.goal||''; gearInput.value=state.profile.gear||''; }
+    $('#saveProfile').addEventListener('click',()=>{ state.profile.name=nameInput.value.trim(); state.profile.goal=goalInput.value.trim(); state.profile.gear=gearInput.value.trim(); saveState(); alert('Профиль сохранён ✅'); });
+    $('#wipeAll').addEventListener('click',()=>{ if(!confirm('Стереть все данные в этом браузере?')) return; localStorage.removeItem(KEY); location.reload(); });
+
+    function esc(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));}
+    function download(filename,text){ const blob=new Blob([text],{type:'application/octet-stream'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href); }
+  })();
+  </script>
 </body>
 </html>
