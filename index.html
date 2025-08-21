@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Дневник тренировок </title>
+  <title>Дневник тренировок Коли — v5 (картинки из /assets/pack)</title>
   <style>
     :root{--bg:#0f1115;--panel:#161a22;--panel2:#1c2230;--text:#e6e8ee;--muted:#9aa3b2;--accent:#6ea8fe;--good:#2dd4bf;--warn:#f59e0b;--bad:#f87171}
     *{box-sizing:border-box}
@@ -42,8 +42,8 @@
     .atlas{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .panelAtlas{position:relative;background:#0b1220;border:1px solid #22314a;border-radius:12px;overflow:hidden}
     .panelAtlas .title{position:absolute;left:8px;bottom:6px;color:#9aa3b2;font-size:12px;background:rgba(0,0,0,.35);padding:2px 6px;border-radius:6px}
-    .panelAtlas .layer{position:absolute;inset:0;object-fit:contain;opacity:.92;pointer-events:none}
-    .panelAtlas .base{position:relative;display:block;width:100%}
+    .panelAtlas .layer{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:.92;pointer-events:none}
+    .panelAtlas .base{position:relative;display:block;width:100%;height:auto}
   @media (max-width: 820px){
   .wrap{padding:12px}
   h1{font-size:18px}
@@ -480,20 +480,26 @@
       const backWrap = document.createElement('div'); backWrap.className='panelAtlas';
       fig.appendChild(frontWrap); fig.appendChild(backWrap);
 
-      // Подложки
+      // helpers
+      const loadImg=(url,cls)=> new Promise(res=>{ if(!url) return res(null); const im=new Image(); im.className=cls||''; im.onload=()=>res(im); im.onerror=()=>res(null); im.src=url+`?v=${Date.now()}`; });
+
+      // Подложки: задаём aspect-ratio корпуса по натуральным размерам
       const frontBaseUrl = await pickUrl(BASE_IMG.front);
       const backBaseUrl  = await pickUrl(BASE_IMG.back);
-      if(frontBaseUrl){ const img=document.createElement('img'); img.className='base'; img.src=frontBaseUrl; frontWrap.appendChild(img);} else {frontWrap.innerHTML='<div class="muted small" style="padding:12px">Нет подложки (pered.gif)</div>'}
-      if(backBaseUrl){ const img=document.createElement('img'); img.className='base'; img.src=backBaseUrl; backWrap.appendChild(img);} else {backWrap.innerHTML='<div class="muted small" style="padding:12px">Нет подложки (zad.gif)</div>'}
+      const frontBaseImg = await loadImg(frontBaseUrl,'base');
+      const backBaseImg  = await loadImg(backBaseUrl,'base');
+      if(frontBaseImg){ frontWrap.style.aspectRatio = `${frontBaseImg.naturalWidth} / ${frontBaseImg.naturalHeight}`; frontWrap.appendChild(frontBaseImg);} else {frontWrap.innerHTML='<div class="muted small" style="padding:12px">Нет подложки (pered.gif)</div>'}
+      if(backBaseImg){ backWrap.style.aspectRatio = `${backBaseImg.naturalWidth} / ${backBaseImg.naturalHeight}`; backWrap.appendChild(backBaseImg);} else {backWrap.innerHTML='<div class="muted small" style="padding:12px">Нет подложки (zad.gif)</div>'}
+
       const ft=document.createElement('div'); ft.className='title'; ft.textContent='СПЕРЕДИ'; frontWrap.appendChild(ft);
       const bt=document.createElement('div'); bt.className='title'; bt.textContent='СЗАДИ'; backWrap.appendChild(bt);
 
-      // Слои для выбранных групп
+      // Слои для выбранных групп (растягиваем по контейнеру 1:1 — больше не "съезжают")
       let anyLayer=false;
       for(const g of groups){
         const files = FILES[g]; if(!files) continue;
-        if(files.front){ for(const f of files.front){ const url=await pickUrl(f); if(url){ const img=document.createElement('img'); img.className='layer'; img.src=url; frontWrap.appendChild(img); anyLayer=true; }} }
-        if(files.back){ for(const f of files.back){ const url=await pickUrl(f); if(url){ const img=document.createElement('img'); img.className='layer'; img.src=url; backWrap.appendChild(img); anyLayer=true; }} }
+        if(files.front){ for(const f of files.front){ const url=await pickUrl(f); const im=await loadImg(url,'layer'); if(im){ frontWrap.appendChild(im); anyLayer=true; }} }
+        if(files.back){ for(const f of files.back){ const url=await pickUrl(f); const im=await loadImg(url,'layer'); if(im){ backWrap.appendChild(im); anyLayer=true; }} }
       }
 
       // Легенда
