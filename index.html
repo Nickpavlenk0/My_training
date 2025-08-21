@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Дневник тренировок Коли — v5 (картинки из /assets/pack)</title>
+  <title>Дневник тренировок </title>
   <style>
     :root{--bg:#0f1115;--panel:#161a22;--panel2:#1c2230;--text:#e6e8ee;--muted:#9aa3b2;--accent:#6ea8fe;--good:#2dd4bf;--warn:#f59e0b;--bad:#f87171}
     *{box-sizing:border-box}
@@ -44,7 +44,24 @@
     .panelAtlas .title{position:absolute;left:8px;bottom:6px;color:#9aa3b2;font-size:12px;background:rgba(0,0,0,.35);padding:2px 6px;border-radius:6px}
     .panelAtlas .layer{position:absolute;inset:0;object-fit:contain;opacity:.92;pointer-events:none}
     .panelAtlas .base{position:relative;display:block;width:100%}
-  </style>
+  @media (max-width: 820px){
+  .wrap{padding:12px}
+  h1{font-size:18px}
+  nav{gap:6px}
+  nav button{padding:8px 10px;border-radius:10px}
+  input,select,textarea{font-size:16px;padding:12px}
+  .btn{padding:12px}
+  /* Таблицы → карточки */
+  table{border:0}
+  table thead{display:none}
+  table tbody{display:block}
+  table tr{display:block;background:var(--panel2);border:1px solid #22314a;border-radius:12px;padding:10px;margin:10px 0}
+  table td{display:flex;gap:8px;align-items:center;border-bottom:0;padding:6px 0}
+  table td::before{content:attr(data-label);flex:0 0 42%;min-width:120px;color:var(--muted);font-size:12px}
+  .col-eye{width:auto;text-align:left}
+  .col-eye .btn{width:100%}
+}
+</style>
 </head>
 <body>
   <header>
@@ -343,6 +360,9 @@
         <td><input value="${esc(item.note||'')}" placeholder="Заметка (твоё исполнение)"></td>
         <td class="col-eye"><button class="btn ghost eye" title="Показать мышцы">👁</button></td>
         <td><button class="btn ghost del" title="Удалить">×</button></td>`;
+      // метки для мобильной вёрстки
+      const labels=['Название','Мышцы','План','Факт','RPE','Техника','Заметка','Вид',''];
+      tr.querySelectorAll('td').forEach((td,i)=> td.dataset.label = labels[i] || '');
       tr.querySelector('.del').addEventListener('click',()=> tr.remove());
       tr.querySelector('.eye').addEventListener('click',()=>{ const mus=tr.querySelectorAll('input')[1].value; showMuscles(mus); });
       tb.appendChild(tr);
