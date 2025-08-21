@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Дневник тренировок Коли — MVP</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Дневник тренировок Коли — MVP</h1>
+      <nav>
+        <button data-tab="today" class="active">Сегодня</button>
+        <button data-tab="history">История</button>
+        <button data-tab="templates">Шаблоны</button>
+        <button data-tab="settings">Настройки</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- СЕГОДНЯ -->
+    <section id="tab-today" class="panel">
+      <div class="row">
+        <div>
+          <label>Дата тренировки</label>
+          <input type="date" id="dateInput"/>
+        </div>
+        <div>
+          <label>Тип дня</label>
+          <select id="dayType">
+            <option value="День 1">День 1 — Плечи/Руки/Пресс</option>
+            <option value="День 2">День 2 — Ноги/Ягодицы/Кор</option>
+            <option value="День 3">День 3 — Грудь/Спина/Пресс</option>
+            <option value="Другой">Другой</option>
+          </select>
+        </div>
+        <div>
+          <label>Общая заметка (самочувствие/цели)</label>
+          <input id="sessionNote" placeholder="Сон, самочувствие, пульс, задачи…"/>
+        </div>
+      </div>
+
+      <h3>Упражнения</h3>
+      <table id="exTable">
+        <thead>
+          <tr>
+            <th style="width:20%">Название</th>
+            <th style="width:12%">Мышцы</th>
+            <th style="width:13%">Схема (план)</th>
+            <th style="width:13%">Факт</th>
+            <th style="width:10%">RPE</th>
+            <th>Заметка</th>
+            <th style="width:10%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="right" style="margin-top:10px">
+        <button class="btn" id="addRowBtn">+ Добавить упражнение</button>
+        <button class="btn ghost" id="loadTemplateBtn">Загрузить шаблон дня</button>
+      </div>
+
+      <details style="margin-top:12px">
+        <summary>Быстрый ввод одним текстом</summary>
+        <p class="small muted">Формат строк: <code>Название — мышцы — план</code>. Пример: <em>Гоблет-присед — квадрицепсы/ягодицы — 3×10</em>. Одна строка = одно упражнение.</p>
+        <textarea id="bulkText" placeholder="Вставь сюда строки упражнений…"></textarea>
+        <div class="right" style="margin-top:8px"><button class="btn" id="bulkAddBtn">Добавить из текста</button></div>
+      </details>
+
+      <div class="row" style="margin-top:14px">
+        <div>
+          <label>Общий комментарий/отчёт</label>
+          <textarea id="reportText" placeholder="Как зашла тренировка? Что было легко/тяжело? Судороги? Пульс?"></textarea>
+        </div>
+      </div>
+
+      <div class="right" style="margin-top:10px">
+        <button class="btn" id="saveBtn">💾 Сохранить тренировку</button>
+        <button class="btn good" id="exportTodayBtn">⬇︎ Экспорт (JSON)</button>
+        <button class="btn ghost" id="copySummaryBtn">📋 Скопировать отчёт для тренера</button>
+      </div>
+    </section>
+
+    <!-- ИСТОРИЯ -->
+    <section id="tab-history" class="panel hidden">
+      <div class="grid">
+        <div class="kpi"><h3>Тренировок за период</h3><div class="num" id="kpiSessions">0</div></div>
+        <div class="kpi"><h3>Общих подходов (факт)</h3><div class="num" id="kpiSets">0</div></div>
+        <div class="kpi"><h3>Средний RPE</h3><div class="num" id="kpiRpe">—</div></div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div>
+          <label>Период с</label>
+          <input type="date" id="fromDate">
+        </div>
+        <div>
+          <label>по</label>
+          <input type="date" id="toDate">
+        </div>
+        <div>
+          <label>Фильтр по типу дня</label>
+          <select id="filterDay">
+            <option value="">Все</option>
+            <option value="День 1">День 1</option>
+            <option value="День 2">День 2</option>
+            <option value="День 3">День 3</option>
+          </select>
+        </div>
+        <div class="right" style="align-items:flex-end">
+          <button class="btn" id="refreshHistory">Обновить</button>
+          <button class="btn good" id="exportRangeJson">Экспорт JSON</button>
+          <button class="btn" id="exportRangeCsv">Экспорт CSV</button>
+          <label class="btn ghost" style="position:relative;overflow:hidden">
+            ⬆︎ Импорт JSON
+            <input type="file" id="importFile" accept="application/json" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          </label>
+        </div>
+      </div>
+
+      <table id="historyTable" style="margin-top:10px">
+        <thead>
+          <tr>
+            <th style="width:110px">Дата</th>
+            <th style="width:90px">День</th>
+            <th>Упражнения (факт)</th>
+            <th style="width:80px">Подходы</th>
+            <th style="width:80px">Средн. RPE</th>
+            <th style="width:110px"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- ШАБЛОНЫ -->
+    <section id="tab-templates" class="panel hidden">
+      <p class="muted small">Шаблоны можно редактировать. При нажатии «Загрузить в Сегодня» — текущие упражнения заменятся списком из шаблона.</p>
+      <div class="grid" id="templatesGrid"></div>
+    </section>
+
+    <!-- НАСТРОЙКИ -->
+    <section id="tab-settings" class="panel hidden">
+      <div class="grid">
+        <div>
+          <label>Имя</label>
+          <input id="nameInput" placeholder="Коля" />
+        </div>
+        <div>
+          <label>Цель</label>
+          <input id="goalInput" placeholder="Сила + выносливость + «Антибока»" />
+        </div>
+        <div>
+          <label>Инвентарь</label>
+          <input id="gearInput" placeholder="Гиря 16 кг, гантель 10 кг, резинки, ролик, диван/стул" />
+        </div>
+      </div>
+      <div class="right" style="margin-top:10px">
+        <button class="btn" id="saveProfile">Сохранить профиль</button>
+        <button class="btn bad" id="wipeAll">Стереть все данные (локально)</button>
+      </div>
+      <p class="muted small">Данные хранятся в браузере (localStorage). Используй экспорт/импорт для резервных копий и переноса.
+      В следующий шаг можно подключить Google Sheets или GitHub Issues для синхронизации — код легко расширить.</p>
+    </section>
+  </main>
+
+  <script defer src="scripts/app.js"></script>
+</body>
+</html>

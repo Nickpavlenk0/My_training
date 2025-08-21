@@ -1,0 +1,36 @@
+:root{--bg:#0f1115;--panel:#161a22;--panel2:#1c2230;--text:#e6e8ee;--muted:#9aa3b2;--accent:#6ea8fe;--good:#2dd4bf;--warn:#f59e0b;--bad:#f87171;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif}
+header{position:sticky;top:0;background:linear-gradient(180deg,var(--bg),rgba(15,17,21,.8));backdrop-filter:blur(6px);z-index:5;border-bottom:1px solid #202534}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+nav button{background:var(--panel);border:1px solid #273043;color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+nav button.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(110,168,254,.25) inset}
+section.panel{background:var(--panel);border:1px solid #273043;border-radius:14px;padding:16px;margin:12px 0}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row > *{flex:1 1 200px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+input,select,textarea{width:100%;background:var(--panel2);border:1px solid #2b3548;color:var(--text);padding:10px;border-radius:10px}
+textarea{min-height:80px}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #273043;padding:10px;vertical-align:top}
+th{color:#b9c1d0;text-align:left}
+.btn{background:#23314a;border:1px solid #2f3f5e;color:#e6e8ee;padding:10px 12px;border-radius:10px;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:#2f3f5e}
+.btn.good{background:#123c36;border-color:#1f8a78}
+.btn.bad{background:#3c1212;border-color:#8a1f1f}
+.pill{display:inline-block;padding:.25em .6em;border:1px solid #334155;border-radius:999px;color:#cbd5e1;background:#111827}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+details{background:#121722;border:1px solid #263149;border-radius:12px;padding:8px 12px}
+details summary{cursor:pointer;color:#cbd5e1}
+.muted{color:var(--muted)}
+.right{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.kpi{background:#101521;border:1px solid #273043;border-radius:12px;padding:12px}
+.kpi h3{margin:0 0 4px 0;font-size:13px;color:#aab3c4}
+.kpi .num{font-size:20px;font-weight:700}
+.tag{font-size:12px;color:#aab3c4}
+.small{font-size:12px}
+.hidden{display:none}
+code{background:#0b1220;padding:.1em .2em;border-radius:6px;border:1px solid #22314a}
