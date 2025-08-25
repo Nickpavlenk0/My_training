@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ru">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -73,7 +74,9 @@
         <button data-tab="settings">Настройки</button>
       </nav>
     </div>
-  </header>  <main class="wrap">
+  </header>
+
+  <main class="wrap">
     <section id="tab-today" class="panel">
       <div class="row">
         <div>
@@ -93,91 +96,92 @@
           <label>Описание тренировки (как выполнять, приоритеты)</label>
           <input id="descInput" placeholder="Напр.: темп 3‑1‑1, паузы 60‑90с; порядок: сначала многосуставные, затем добивка; держать нейтраль в пояснице…"/>
         </div>
-      </div><div class="help" style="margin:6px 0 10px 0">RPE = субъективная интенсивность 1–10 (10 = отказ; 8 ≈ 2 повтора в запасе). <button id="rpeHelp" class="btn ghost" style="padding:6px 8px">Справка по RPE</button></div>
+      </div>
 
-  <h3>Разминка</h3>
-  <table id="warmTable">
-    <thead>
-      <tr>
-        <th style="width:18%">Название</th>
-        <th style="width:14%">Мышцы</th>
-        <th style="width:12%">План</th>
-        <th style="width:12%">Факт</th>
-        <th style="width:7%">RPE</th>
-        <th style="width:17%">Техника</th>
-        <th>Заметка</th>
-        <th class="col-eye">Вид</th>
-        <th style="width:6%"></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="warm">+ Добавить (разминка)</button></div>
+      <div class="help" style="margin:6px 0 10px 0">RPE = субъективная интенсивность 1–10 (10 = отказ; 8 ≈ 2 повтора в запасе). <button id="rpeHelp" class="btn ghost" style="padding:6px 8px">Справка по RPE</button></div>
 
-  <h3>Силовая часть</h3>
-  <table id="strengthTable">
-    <thead>
-      <tr>
-        <th style="width:18%">Название</th>
-        <th style="width:14%">Мышцы</th>
-        <th style="width:12%">План</th>
-        <th style="width:12%">Факт</th>
-        <th style="width:7%">RPE</th>
-        <th style="width:17%">Техника</th>
-        <th>Заметка</th>
-        <th class="col-eye">Вид</th>
-        <th style="width:6%"></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div class="row" style="justify-content:space-between;margin:6px 0 18px 0">
-    <button class="btn" data-add="strength">+ Добавить (силовая)</button>
-    <button class="btn ghost" id="loadTemplateBtn">Загрузить шаблон дня</button>
-  </div>
+      <h3>Разминка</h3>
+      <table id="warmTable">
+        <thead>
+          <tr>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
+            <th>Заметка</th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="warm">+ Добавить (разминка)</button></div>
 
-  <h3>Высокоинтенсив</h3>
-  <table id="hiitTable">
-    <thead>
-      <tr>
-        <th style="width:18%">Название</th>
-        <th style="width:14%">Мышцы</th>
-        <th style="width:12%">План</th>
-        <th style="width:12%">Факт</th>
-        <th style="width:7%">RPE</th>
-        <th style="width:17%">Техника</th>
-        <th>Заметка</th>
-        <th class="col-eye">Вид</th>
-        <th style="width:6%"></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="hiit">+ Добавить (ВИИТ)</button></div>
+      <h3>Силовая часть</h3>
+      <table id="strengthTable">
+        <thead>
+          <tr>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
+            <th>Заметка</th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="justify-content:space-between;margin:6px 0 18px 0">
+        <button class="btn" data-add="strength">+ Добавить (силовая)</button>
+        <button class="btn ghost" id="loadTemplateBtn">Загрузить шаблон дня</button>
+      </div>
 
-  <h3>Заминка</h3>
-  <table id="coolTable">
-    <thead>
-      <tr>
-        <th style="width:18%">Название</th>
-        <th style="width:14%">Мышцы</th>
-        <th style="width:12%">План</th>
-        <th style="width:12%">Факт</th>
-        <th style="width:7%">RPE</th>
-        <th style="width:17%">Техника</th>
-        <th>Заметка</th>
-        <th class="col-eye">Вид</th>
-        <th style="width:6%"></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="cool">+ Добавить (заминка)</button></div>
+      <h3>Высокоинтенсив</h3>
+      <table id="hiitTable">
+        <thead>
+          <tr>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
+            <th>Заметка</th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="hiit">+ Добавить (ВИИТ)</button></div>
 
-  <details>
-    <summary>Быстрый ввод / вставка плана из чата</summary>
-    <p class="small muted">Секции: <code>Разминка:</code>, <code>Силовая:</code>, <code>Высокоинтенсив:</code>, <code>Заминка:</code>. Строки: <code>Название — мышцы — план — tip:техника — note:заметка</code>. <i>«tip» и «note» необязательны.</i></p>
+      <h3>Заминка</h3>
+      <table id="coolTable">
+        <thead>
+          <tr>
+            <th style="width:18%">Название</th>
+            <th style="width:14%">Мышцы</th>
+            <th style="width:12%">План</th>
+            <th style="width:12%">Факт</th>
+            <th style="width:7%">RPE</th>
+            <th style="width:17%">Техника</th>
+            <th>Заметка</th>
+            <th class="col-eye">Вид</th>
+            <th style="width:6%"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="justify-content:flex-end;margin:6px 0 18px 0"><button class="btn" data-add="cool">+ Добавить (заминка)</button></div>
 
+      <details>
+        <summary>Быстрый ввод / вставка плана из чата</summary>
+        <p class="small muted">Секции: <code>Разминка:</code>, <code>Силовая:</code>, <code>Высокоинтенсив:</code>, <code>Заминка:</code>. Строки: <code>Название — мышцы — план — tip:техника — note:заметка</code>. <i>«tip» и «note» необязательны.</i></p>
 <textarea id="bulkText" placeholder="Например:
 Разминка:
 Стойка у стены — плечи/кор — 2×30с — tip:нейтраль поясницы
@@ -187,103 +191,105 @@
 Высокоинтенсив:
 Качели с гирей — ягодицы/бицепс бедра/кор — 30с × 3 (30с отдых)
 Заминка:
-Плечевой замок — дельты/грудь — 2×30с"></textarea><div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" id="bulkAddBtn">Разобрать и заполнить</button></div>
-  </details>
+Плечевой замок — дельты/грудь — 2×30с"></textarea>
+        <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" id="bulkAddBtn">Разобрать и заполнить</button></div>
+      </details>
 
-  <div class="row" style="margin-top:14px">
-    <div>
-      <label>Общий комментарий/отчёт</label>
-      <textarea id="reportText" placeholder="Как зашла тренировка? Что было легко/тяжело? Судороги? Пульс?"></textarea>
-    </div>
-  </div>
+      <div class="row" style="margin-top:14px">
+        <div>
+          <label>Общий комментарий/отчёт</label>
+          <textarea id="reportText" placeholder="Как зашла тренировка? Что было легко/тяжело? Судороги? Пульс?"></textarea>
+        </div>
+      </div>
 
-  <div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px">
-    <button class="btn" id="saveBtn">💾 Сохранить тренировку</button>
-    <button class="btn good" id="exportTodayBtn">⬇︎ Экспорт (JSON)</button>
-    <button class="btn ghost" id="copySummaryBtn">📋 Скопировать отчёт для тренера</button>
-    <button class="btn bad" id="deleteTodayBtn">🗑 Удалить эту тренировку</button>
-  </div>
-</section>
+      <div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px">
+        <button class="btn" id="saveBtn">💾 Сохранить тренировку</button>
+        <button class="btn good" id="exportTodayBtn">⬇︎ Экспорт (JSON)</button>
+        <button class="btn ghost" id="copySummaryBtn">📋 Скопировать отчёт для тренера</button>
+        <button class="btn bad" id="deleteTodayBtn">🗑 Удалить эту тренировку</button>
+      </div>
+    </section>
 
-<section id="tab-history" class="panel hidden">
-  <div class="grid">
-    <div class="kpi"><h3>Тренировок за период</h3><div class="num" id="kpiSessions">0</div></div>
-    <div class="kpi"><h3>Общих подходов (факт)</h3><div class="num" id="kpiSets">0</div></div>
-    <div class="kpi"><h3>Средний RPE</h3><div class="num" id="kpiRpe">—</div></div>
-  </div>
+    <section id="tab-history" class="panel hidden">
+      <div class="grid">
+        <div class="kpi"><h3>Тренировок за период</h3><div class="num" id="kpiSessions">0</div></div>
+        <div class="kpi"><h3>Общих подходов (факт)</h3><div class="num" id="kpiSets">0</div></div>
+        <div class="kpi"><h3>Средний RPE</h3><div class="num" id="kpiRpe">—</div></div>
+      </div>
 
-  <div class="row" style="margin-top:12px">
-    <div>
-      <label>Период с</label>
-      <input type="date" id="fromDate">
-    </div>
-    <div>
-      <label>по</label>
-      <input type="date" id="toDate">
-    </div>
-    <div>
-      <label>Фильтр по типу дня</label>
-      <select id="filterDay">
-        <option value="">Все</option>
-        <option value="День 1">День 1</option>
-        <option value="День 2">День 2</option>
-        <option value="День 3">День 3</option>
-      </select>
-    </div>
-    <div class="row" style="justify-content:flex-end;align-items:flex-end">
-      <button class="btn" id="refreshHistory">Обновить</button>
-      <button class="btn good" id="exportRangeJson">Экспорт JSON</button>
-      <button class="btn" id="exportRangeCsv">Экспорт CSV</button>
-      <label class="btn ghost" style="position:relative;overflow:hidden">
-        ⬆︎ Импорт JSON
-        <input type="file" id="importFile" accept="application/json" style="position:absolute;inset:0;opacity:0;cursor:pointer">
-      </label>
-    </div>
-  </div>
+      <div class="row" style="margin-top:12px">
+        <div>
+          <label>Период с</label>
+          <input type="date" id="fromDate">
+        </div>
+        <div>
+          <label>по</label>
+          <input type="date" id="toDate">
+        </div>
+        <div>
+          <label>Фильтр по типу дня</label>
+          <select id="filterDay">
+            <option value="">Все</option>
+            <option value="День 1">День 1</option>
+            <option value="День 2">День 2</option>
+            <option value="День 3">День 3</option>
+          </select>
+        </div>
+        <div class="row" style="justify-content:flex-end;align-items:flex-end">
+          <button class="btn" id="refreshHistory">Обновить</button>
+          <button class="btn good" id="exportRangeJson">Экспорт JSON</button>
+          <button class="btn" id="exportRangeCsv">Экспорт CSV</button>
+          <label class="btn ghost" style="position:relative;overflow:hidden">
+            ⬆︎ Импорт JSON
+            <input type="file" id="importFile" accept="application/json" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          </label>
+        </div>
+      </div>
 
-  <table id="historyTable" style="margin-top:10px">
-    <thead>
-      <tr>
-        <th style="width:110px">Дата</th>
-        <th style="width:90px">День</th>
-        <th>Строк (все секции)</th>
-        <th style="width:80px">Подходы</th>
-        <th style="width:80px">Средн. RPE</th>
-        <th style="width:110px"></th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
+      <table id="historyTable" style="margin-top:10px">
+        <thead>
+          <tr>
+            <th style="width:110px">Дата</th>
+            <th style="width:90px">День</th>
+            <th>Строк (все секции)</th>
+            <th style="width:80px">Подходы</th>
+            <th style="width:80px">Средн. RPE</th>
+            <th style="width:110px"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
 
-<section id="tab-templates" class="panel hidden">
-  <p class="small muted">Шаблоны можно редактировать и загружать целиком в «Сегодня».</p>
-  <div class="grid" id="templatesGrid"></div>
-</section>
+    <section id="tab-templates" class="panel hidden">
+      <p class="small muted">Шаблоны можно редактировать и загружать целиком в «Сегодня».</p>
+      <div class="grid" id="templatesGrid"></div>
+    </section>
 
-<section id="tab-settings" class="panel hidden">
-  <div class="grid">
-    <div>
-      <label>Имя</label>
-      <input id="nameInput" placeholder="Коля" />
-    </div>
-    <div>
-      <label>Цель</label>
-      <input id="goalInput" placeholder="Сила + выносливость + «Антибока»" />
-    </div>
-    <div>
-      <label>Инвентарь</label>
-      <input id="gearInput" placeholder="Гиря 16 кг, гантель 10 кг, резинки, ролик, диван/стул" />
-    </div>
-  </div>
-  <div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px">
-    <button class="btn" id="saveProfile">Сохранить профиль</button>
-    <button class="btn bad" id="wipeAll">Стереть все данные (локально)</button>
-  </div>
-  <p class="muted small">Данные хранятся в браузере (localStorage). Используй экспорт/импорт для резервных копий и переноса.</p>
-</section>
+    <section id="tab-settings" class="panel hidden">
+      <div class="grid">
+        <div>
+          <label>Имя</label>
+          <input id="nameInput" placeholder="Коля" />
+        </div>
+        <div>
+          <label>Цель</label>
+          <input id="goalInput" placeholder="Сила + выносливость + «Антибока»" />
+        </div>
+        <div>
+          <label>Инвентарь</label>
+          <input id="gearInput" placeholder="Гиря 16 кг, гантель 10 кг, резинки, ролик, диван/стул" />
+        </div>
+      </div>
+      <div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px">
+        <button class="btn" id="saveProfile">Сохранить профиль</button>
+        <button class="btn bad" id="wipeAll">Стереть все данные (локально)</button>
+      </div>
+      <p class="muted small">Данные хранятся в браузере (localStorage). Используй экспорт/импорт для резервных копий и переноса.</p>
+    </section>
+  </main>
 
-  </main>  <dialog id="rpeModal">
+  <dialog id="rpeModal">
     <h3>RPE — субъективная тяжесть подхода (1–10)</h3>
     <ul class="small">
       <li><b>6–7</b> — легко, осталось 3–4 повтора в запасе</li>
@@ -292,12 +298,16 @@
       <li><b>10</b> — отказ, запас = 0</li>
     </ul>
     <div class="row" style="justify-content:flex-end"><button class="btn" id="closeRpe">Закрыть</button></div>
-  </dialog>  <dialog id="muscleModal">
+  </dialog>
+
+  <dialog id="muscleModal">
     <h3>Задействованные мышцы</h3>
     <div id="muscleFigure" class="atlas"></div>
     <div id="muscleLegend" class="legend"></div>
     <div class="row" style="justify-content:flex-end"><button class="btn" id="closeMuscle">Закрыть</button></div>
-  </dialog>  <script>
+  </dialog>
+
+  <script>
   (()=>{
     const KEY='kolyaTrainingV1';
     const $=(s)=>document.querySelector(s); const $$=(s)=>Array.from(document.querySelectorAll(s));
@@ -521,7 +531,8 @@
     function esc(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));}
     function download(filename,text){ const blob=new Blob([text],{type:'application/octet-stream'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href); }
   })();
-  </script><style>
+  </script>
+<style>
 /* === Overlay view for mobile-friendly readable text === */
 td{position:relative}
 td .cell-view{position:relative;display:block;width:100%;padding:10px 12px;border-radius:10px;background:var(--panel, #0f141d);border:1px solid #22314a;color:#dbe9ff;min-height:42px;line-height:1.3;white-space:normal;overflow-wrap:anywhere}
@@ -529,7 +540,8 @@ td input,td textarea{position:absolute;inset:0;width:100%;height:100%;background
 td textarea{resize:none}
 .lockBadge{font-size:12px;color:#7f9bbd;margin-left:8px}
 @media (max-width:820px){td .cell-view{padding:12px;font-size:16px}}
-</style><script>
+</style>
+<script>
 (function(){
   const $=s=>document.querySelector(s);
   const $$=s=>Array.from(document.querySelectorAll(s));
@@ -577,5 +589,6 @@ td textarea{resize:none}
   document.addEventListener('DOMContentLoaded', prepare);
   window.addEventListener('load', prepare);
 })();
-</script></body>
+</script>
+</body>
 </html>
